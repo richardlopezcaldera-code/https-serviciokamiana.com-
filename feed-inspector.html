@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Inspector de Feed — MobiliarioTech / Kamiana CRM</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a30;--panel2:#0e1528;--border:#243052;--text:#e5eaf5;--text2:#9aa7c7;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--purple:#a855f7;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);padding:24px;font-size:14px;}
+h1{font-size:20px;margin-bottom:4px;}
+.sub{color:var(--text2);margin-bottom:20px;font-size:13px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;}
+.panel h2{font-size:14px;margin-bottom:10px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+input[type=text]{flex:1;min-width:280px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;}
+button{background:var(--blue);border:none;border-radius:8px;padding:10px 16px;color:#fff;font-weight:600;cursor:pointer;font-size:13px;}
+button:hover{opacity:.9;}
+button.ghost{background:transparent;border:1px solid var(--border);color:var(--text2);}
+button.ghost:hover{color:var(--text);border-color:var(--blue);}
+pre{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;overflow:auto;max-height:340px;font-family:'Consolas','JetBrains Mono',monospace;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;color:#c9d4ee;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th,td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);color:var(--text2);text-transform:uppercase;font-size:10px;letter-spacing:.5px;}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.b-ok{background:rgba(34,197,94,.15);color:var(--green);}
+.b-err{background:rgba(239,68,68,.15);color:var(--red);}
+.b-warn{background:rgba(245,158,11,.15);color:var(--amber);}
+.b-info{background:rgba(59,130,246,.15);color:var(--blue);}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:4px 12px;font-size:12px;}
+.kv .k{color:var(--text2);}
+.hint{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:10px 12px;font-size:12px;color:#fbd38d;margin-top:10px;line-height:1.6;}
+.hidden{display:none;}
+textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;color:#c9d4ee;font-family:'Consolas',monospace;font-size:12px;min-height:220px;}
+.presets{margin-top:8px;}
+.presets button{margin-right:6px;margin-bottom:6px;}
+</style>
+</head>
+<body>
+<h1>🔍 Inspector de Respuesta Cruda del Feed</h1>
+<p class="sub">Tienda: <strong>MobiliarioTech</strong> (Jumpseller) · <code>https://mobiliariostechchile.cl</code> · Herramienta para inspeccionar el feed y ajustar el script de importación del CRM Kamiana</p>
+
+<div class="panel">
+  <h2>1 · URL del feed</h2>
+  <div class="row">
+    <input type="text" id="url" value="https://mobiliariostechchile.cl/products/feed"/>
+    <button onclick="inspect()">Inspeccionar</button>
+  </div>
+  <div class="presets">
+    <button class="ghost" onclick="setUrl('https://mobiliariostechchile.cl/products/feed')">Feed Google Shopping (XML)</button>
+    <button class="ghost" onclick="setUrl('https://mobiliariostechchile.cl/sitemap.xml')">Sitemap XML</button>
+    <button class="ghost" onclick="setUrl('https://mobiliariostechchile.cl/')">Home (HTML)</button>
+  </div>
+  <div class="hint">
+    ⚠️ Nota sobre el dominio: el CRM tenía configurado <code>www.mobiliariostecchile.cl</code> (sin la "h"). El dominio real de la tienda es
+    <code>mobiliariostechchile.cl</code>. Si el feed devuelve error de DNS o 404, revisa primero la ortografía del dominio.
+  </div>
+</div>
+
+<div class="panel hidden" id="p-status">
+  <h2>2 · Respuesta HTTP</h2>
+  <div id="status-body"></div>
+</div>
+
+<div class="panel hidden" id="p-raw">
+  <h2>3 · Cuerpo crudo de la respuesta <span id="raw-size" class="badge b-info"></span></h2>
+  <pre id="raw"></pre>
+</div>
+
+<div class="panel hidden" id="p-parsed">
+  <h2>4 · Análisis de estructura</h2>
+  <div id="parsed-body"></div>
+</div>
+
+<div class="panel hidden" id="p-map">
+  <h2>5 · Snippet para el script del CRM (DB.productos)</h2>
+  <p class="sub">Productos del feed convertidos al formato exacto que usa <code>kamiana-crm-pro.html</code>. Copia y pega dentro del array <code>DB.productos</code>.</p>
+  <div class="row" style="margin-bottom:8px">
+    <button onclick="copySnippet()">Copiar snippet</button>
+  </div>
+  <textarea id="snippet" spellcheck="false"></textarea>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function setUrl(u){$('url').value=u;inspect();}
+function show(id){$(id).classList.remove('hidden');}
+function hideAll(){['p-status','p-raw','p-parsed','p-map'].forEach(id=>$(id).classList.add('hidden'));}
+
+async function inspect(){
+  hideAll();
+  const url=$('url').value.trim();
+  show('p-status');
+  $('status-body').innerHTML='<span class="badge b-info">Consultando…</span>';
+  let res,text;
+  const t0=performance.now();
+  try{
+    res=await fetch(url,{headers:{'Accept':'application/xml, application/json, text/html, */*'}});
+    text=await res.text();
+  }catch(e){
+    // Error de red: normalmente CORS (el navegador bloquea leer la respuesta de otro dominio) o DNS
+    $('status-body').innerHTML=`
+      <span class="badge b-err">ERROR DE RED / CORS</span>
+      <div class="hint">
+        <strong>${esc(e.message)}</strong><br><br>
+        El navegador no pudo leer la respuesta. Causas típicas:<br>
+        1. <strong>CORS</strong> — la tienda no envía <code>Access-Control-Allow-Origin</code>, así que el feed existe pero el navegador oculta la respuesta.
+           Verifica en la pestaña <em>Network</em> de DevTools (F12): si ahí ves status 200 con contenido, el problema es solo CORS y el script del CRM
+           necesitará un proxy propio o consumir la API de Jumpseller desde un backend.<br>
+        2. <strong>DNS</strong> — dominio mal escrito (recuerda: <code>mobiliariostechchile.cl</code>, con "h").<br><br>
+        Para ver la respuesta cruda sin restricción CORS, ejecuta en un terminal:<br>
+        <code>curl -i "${esc(url)}"</code>
+      </div>`;
+    return;
+  }
+  const ms=Math.round(performance.now()-t0);
+  const ct=res.headers.get('content-type')||'(sin content-type)';
+  let headerRows='';
+  res.headers.forEach((v,k)=>{headerRows+=`<div class="k">${esc(k)}</div><div>${esc(v)}</div>`;});
+  $('status-body').innerHTML=`
+    <span class="badge ${res.ok?'b-ok':'b-err'}">HTTP ${res.status} ${esc(res.statusText)}</span>
+    <span class="badge b-info">${ms} ms</span>
+    <span class="badge b-info">${esc(ct)}</span>
+    <div class="kv" style="margin-top:10px">${headerRows}</div>`;
+
+  show('p-raw');
+  const LIMIT=60000;
+  $('raw-size').textContent=`${text.length.toLocaleString('es-CL')} caracteres`;
+  $('raw').textContent=text.slice(0,LIMIT)+(text.length>LIMIT?`\n\n… [truncado: ${(text.length-LIMIT).toLocaleString('es-CL')} caracteres más]`:'');
+
+  analyze(text,ct);
+}
+
+function analyze(text,ct){
+  show('p-parsed');
+  const body=$('parsed-body');
+  const trimmed=text.trim();
+
+  // JSON
+  if(trimmed.startsWith('{')||trimmed.startsWith('[')){
+    try{
+      const data=JSON.parse(trimmed);
+      const items=Array.isArray(data)?data:(data.products||data.items||[data]);
+      const first=items[0]&&items[0].product?items.map(x=>x.product):items;
+      body.innerHTML=`<span class="badge b-ok">JSON válido</span> <span class="badge b-info">${items.length} elemento(s)</span>
+        <p style="margin:10px 0 6px;color:var(--text2)">Campos detectados en el primer elemento:</p>
+        <pre>${esc(JSON.stringify(first[0],null,2).slice(0,8000))}</pre>`;
+      buildSnippetFromJSON(first);
+      return;
+    }catch(e){
+      body.innerHTML=`<span class="badge b-err">Parece JSON pero no parsea: ${esc(e.message)}</span>`;
+      return;
+    }
+  }
+
+  // XML (feed Google Shopping / RSS / sitemap)
+  if(trimmed.startsWith('<')){
+    const doc=new DOMParser().parseFromString(text,'application/xml');
+    if(doc.querySelector('parsererror')){
+      body.innerHTML=`<span class="badge b-warn">Empieza con "&lt;" pero no es XML válido (probablemente HTML). Content-Type: ${esc(ct)}</span>
+        <div class="hint">Si esperabas el feed de productos y llegó HTML, la URL no es la del feed o hubo una redirección. Revisa la sección 2 (respuesta HTTP).</div>`;
+      return;
+    }
+    const items=[...doc.querySelectorAll('item, entry, url')];
+    if(!items.length){
+      body.innerHTML=`<span class="badge b-warn">XML válido pero sin &lt;item&gt;/&lt;entry&gt;/&lt;url&gt;. Nodo raíz: &lt;${esc(doc.documentElement.tagName)}&gt;</span>`;
+      return;
+    }
+    // Inventario de etiquetas presentes en los items (con namespace, ej. g:price)
+    const tags=new Map();
+    items.slice(0,50).forEach(it=>[...it.children].forEach(ch=>{
+      const name=ch.prefix?`${ch.prefix}:${ch.localName}`:ch.localName;
+      if(!tags.has(name))tags.set(name,ch.textContent.trim().slice(0,120));
+    }));
+    let tagRows='';
+    tags.forEach((sample,name)=>{tagRows+=`<tr><td><code>&lt;${esc(name)}&gt;</code></td><td>${esc(sample)}</td></tr>`;});
+    body.innerHTML=`<span class="badge b-ok">XML válido</span>
+      <span class="badge b-info">${items.length} item(s)</span>
+      <span class="badge b-info">raíz: &lt;${esc(doc.documentElement.tagName)}&gt;</span>
+      <p style="margin:10px 0 6px;color:var(--text2)">Etiquetas encontradas dentro de cada item (con valor de ejemplo):</p>
+      <table><thead><tr><th>Etiqueta</th><th>Valor de ejemplo</th></tr></thead><tbody>${tagRows}</tbody></table>`;
+    if(doc.documentElement.tagName!=='urlset')buildSnippetFromXML(items);
+    return;
+  }
+
+  body.innerHTML=`<span class="badge b-warn">Formato no reconocido (ni JSON ni XML). Content-Type: ${esc(ct)}</span>`;
+}
+
+// Mapeo → formato DB.productos del CRM:
+// {id,nombre,sku,cat,subcat,marca,precio,costo,stock,stockMin,unidad,prov,desc,specs}
+const stripHtml=s=>{const d=document.createElement('div');d.innerHTML=s||'';return d.textContent.replace(/\s+/g,' ').trim();};
+
+function buildSnippetFromJSON(products){
+  const rows=products.map((p,i)=>({
+    id:`P${String(p.id||i+1).slice(-5)}`,
+    nombre:p.name||p.title||'',
+    sku:p.sku||'',
+    cat:(p.categories&&p.categories[0]&&p.categories[0].name)||'Muebles',
+    subcat:(p.categories&&p.categories[1]&&p.categories[1].name)||'',
+    marca:p.brand||'',
+    precio:Math.round(Number(p.price)||0),
+    costo:Math.round(Number(p.cost_per_item)||0),
+    stock:Number(p.stock)||0,
+    stockMin:0,
+    unidad:'Unidad',
+    prov:'PV001',
+    desc:stripHtml(p.description).slice(0,300),
+    specs:{peso:p.weight?`${p.weight}kg`:'',largo:p.length?`${p.length}cm`:'',ancho:p.width?`${p.width}cm`:'',alto:p.height?`${p.height}cm`:''},
+  }));
+  showSnippet(rows);
+}
+
+function buildSnippetFromXML(items){
+  const get=(it,name)=>{
+    for(const ch of it.children){
+      const n=ch.prefix?`${ch.prefix}:${ch.localName}`:ch.localName;
+      if(n===name||ch.localName===name)return ch.textContent.trim();
+    }
+    return '';
+  };
+  const rows=items.map((it,i)=>{
+    const priceRaw=get(it,'g:price')||get(it,'price');
+    return {
+      id:`P${String(get(it,'g:id')||i+1).slice(-5)}`,
+      nombre:get(it,'title'),
+      sku:get(it,'g:mpn')||get(it,'g:id'),
+      cat:get(it,'g:product_type')||'Muebles',
+      subcat:'',
+      marca:get(it,'g:brand'),
+      precio:Math.round(parseFloat(priceRaw.replace(/[^\d.]/g,''))||0),
+      costo:0,
+      stock:/in.stock/i.test(get(it,'g:availability'))?1:0,
+      stockMin:0,
+      unidad:'Unidad',
+      prov:'PV001',
+      desc:stripHtml(get(it,'description')).slice(0,300),
+      specs:{},
+    };
+  });
+  showSnippet(rows);
+}
+
+function showSnippet(rows){
+  show('p-map');
+  $('snippet').value='// Generado por feed-inspector.html — pegar dentro de DB.productos\n'
+    +rows.map(r=>'  '+JSON.stringify(r)).join(',\n')+',';
+}
+function copySnippet(){
+  navigator.clipboard.writeText($('snippet').value).then(()=>alert('Snippet copiado al portapapeles'));
+}
+</script>
+</body>
+</html>
