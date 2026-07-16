@@ -12,6 +12,12 @@ __pycache__/
 # Salida del propio graphify
 graphify-out/
 
+# Scaffolding de las propias herramientas de agente (no es parte del producto)
+CLAUDE.md
+AGENTS.md
+.graphifyignore
+.claude/
+
 # Assets pesados (imágenes/video/audio/binarios) — descomenta/ajusta según crezca el repo
 assets/
 public/assets/
