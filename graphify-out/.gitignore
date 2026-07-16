@@ -1,0 +1,6 @@
+# Sidecars específicos de máquina (rutas absolutas del contenedor) — regenerables
+.graphify_python
+.graphify_root
+
+# Cache de extracción (claves por mtime/ruta absoluta) — se reconstruye con `graphify update .`
+cache/
