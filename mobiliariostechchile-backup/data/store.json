@@ -1,0 +1,32 @@
+{
+  "store": {
+    "name": "MobiliarioTech",
+    "code": "mobiliariotech",
+    "currency": "CLP",
+    "country": "CL",
+    "timezone": "America/Santiago",
+    "email": "contacto@mobiliariostechchile.cl",
+    "hooks_token": "__REDACTADO__",
+    "url": "https://mobiliariostechchile.cl",
+    "address": {
+      "address": "Carmen 1865",
+      "city": "Santiago",
+      "postal": null,
+      "region": "Región Metropolitana",
+      "country": "Chile",
+      "country_code": "CL",
+      "region_code": "12",
+      "latitude": -33.4694,
+      "longitude": -70.6366
+    },
+    "subscription_plan": "advanced",
+    "subscription_status": "subscribed",
+    "logo": "https://images.jumpseller.com/store/mobiliariotech/store/logo/Logo_Landing_Mobiliaria_TechChile.png",
+    "weight_unit": "kg",
+    "fb_pixel_id": null,
+    "whatsapp_phone": "56961544423",
+    "mobile_app_version": "1.7.14",
+    "checkout_version": "v2",
+    "platform": "Jumpseller"
+  }
+}

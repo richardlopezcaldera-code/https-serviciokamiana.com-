@@ -1,0 +1,27 @@
+{
+  "_nota": "Índice de las 15 páginas de la tienda (3 legales + 12 entradas de blog, de las cuales 11 son artículos reales y 1 es la publicación demo). Las observaciones de las páginas legales se detallan porque requieren corrección (ver REVISION.md). El texto completo de los artículos vive en la tienda (fuente canónica) y en el respaldo nativo de Jumpseller.",
+  "paginas": [
+    {"id":2693640,"title":"Entrada del Blog","permalink":"entrada-del-blog","status":"hidden","template":"Post","legal":false,"categoria":"Blog","observacion":"Publicación demo de Jumpseller. Recomendado ELIMINAR."},
+    {"id":2693641,"title":"Términos y Condiciones","permalink":"terminos-y-condiciones","status":"public","template":"Default","legal":true,"observacion":"PLANTILLA DEMO SIN COMPLETAR. Dirección vacía ('se encuentra en , .'), links a mobiliariotech.jumpseller.com, incluye la frase 'creada como un ejemplo por Jumpseller'."},
+    {"id":2693642,"title":"Política de reembolso","permalink":"politica-de-reembolso","status":"public","template":"Default","legal":true,"observacion":"PLANTILLA DEMO. Email de contacto es 'agencia+mobiliariotech@socialite.cl' (agencia) y dirección de devolución vacía."},
+    {"id":2693643,"title":"Política de privacidad","permalink":"politica-de-privacidad","status":"public","template":"Default","legal":true,"observacion":"PLANTILLA DEMO. Menciona 'residentes europeos', transferencia a Canadá/EE.UU. e instrucciones placeholder. No adaptada a la Ley chilena 19.628 / 21.719."},
+    {"id":2778957,"title":"Cómo elegir una silla de oficina ergonómica: guía completa","permalink":"como-elegir-una-silla-de-oficina-ergonomica-guia-completa","status":"public","template":"Post","legal":false,"categoria":"Blog","page_title":"Cómo elegir una silla de oficina ergonómica: guía 2026","meta_description":"Guía práctica para elegir una silla de oficina ergonómica: respaldo, ajustes, materiales y tipos según tu uso."},
+    {"id":2778958,"title":"Escritorio recto o en L: ¿cuál conviene para tu oficina u home office?","permalink":"escritorio-recto-o-en-l-cual-conviene-para-tu-oficina-u-home-office","status":"public","template":"Post","legal":false,"categoria":"Blog","page_title":"Escritorio recto o en L: ¿cuál elegir? | MobiliarioTech"},
+    {"id":2778959,"title":"Guía de lockers para empresas, gimnasios y colegios","permalink":"guia-de-lockers-para-empresas-gimnasios-y-colegios","status":"public","template":"Post","legal":false,"categoria":"Blog","page_title":"Guía de lockers para empresas y gimnasios | Chile"},
+    {"id":2778960,"title":"Cómo elegir la mesa de reunión ideal según tu sala","permalink":"como-elegir-la-mesa-de-reunion-ideal-segun-tu-sala","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2778961,"title":"Ideas para organizar una oficina pequeña y ganar espacio","permalink":"ideas-para-organizar-una-oficina-pequena-y-ganar-espacio","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780731,"title":"Pizarras y diarios murales para colegios: cómo elegir la correcta","permalink":"pizarras-y-diarios-murales-para-colegios-como-elegir-la-correcta","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780732,"title":"Mobiliario clínico: qué necesita realmente una consulta o centro de salud","permalink":"mobiliario-clinico-que-necesita-realmente-una-consulta-o-centro-de-salud","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780733,"title":"Cómo organizar una bodega o archivo con estanterías (sin volverte loco)","permalink":"como-organizar-una-bodega-o-archivo-con-estanterias-sin-volverte-loco","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780734,"title":"Cómo elegir un sofá que aguante (y se vea bien por años)","permalink":"como-elegir-un-sofa-que-aguante-y-se-vea-bien-por-anos","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780735,"title":"Closets de melamina: cómo elegir el que de verdad te ordena la vida","permalink":"closets-de-melamina-como-elegir-el-que-de-verdad-te-ordena-la-vida","status":"public","template":"Post","legal":false,"categoria":"Blog"},
+    {"id":2780736,"title":"Equipar tu terraza o patio: parrillas, bancas y mobiliario de exterior","permalink":"equipar-tu-terraza-o-patio-parrillas-bancas-y-mobiliario-de-exterior","status":"public","template":"Post","legal":false,"categoria":"Blog"}
+  ],
+  "resumen": {
+    "total_paginas": 15,
+    "legales": 3,
+    "blog_articulos_reales": 11,
+    "blog_demo": 1,
+    "nota_conteo": "15 = 3 legales + 11 artículos de blog reales + 1 entrada de blog demo."
+  }
+}

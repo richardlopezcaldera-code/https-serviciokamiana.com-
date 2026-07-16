@@ -1,0 +1,31 @@
+{
+  "_nota": "Resumen agregado de ventas SIN datos personales (decisión del titular). Basado en los 13 pedidos registrados a la fecha del respaldo (2026-07-16). No incluye nombres, direcciones, correos ni teléfonos de clientes.",
+  "fecha_respaldo": "2026-07-16",
+  "pedidos": {
+    "total": 13,
+    "pagados": 8,
+    "abandonados": 5,
+    "rango_ids": "1001-1013"
+  },
+  "ingresos_clp": {
+    "pagados_total": 341383,
+    "pagados_sin_pedidos_de_prueba": 340383,
+    "pedidos_pagados_reales": 6,
+    "ticket_promedio_real": 56731,
+    "pedidos_de_prueba_500clp": 2,
+    "abandonados_valor_total": 486166
+  },
+  "producto_mas_vendido": {
+    "nombre": "Silla Ergonómica de Oficina Malla Negra 808",
+    "id": 34744743,
+    "unidades_pagadas_aprox": 7
+  },
+  "recuperacion_carritos": {
+    "carritos_recuperados": 2,
+    "detalle": "Pedido 1010 recuperado de 1009; pedido 1013 recuperado de 1012."
+  },
+  "medios_pago": ["Flow"],
+  "metodos_envio_usados": ["Envío Gratis Región Metropolitana", "Blue Express Priority", "Starken Normal"],
+  "cobertura_geografica_pagados": ["Región Metropolitana", "Coquimbo", "Araucanía (Temuco)", "O'Higgins (Rancagua)"],
+  "fuente_trafico_predominante": "Google (búsqueda orgánica), con algo de tráfico directo"
+}
