@@ -1,0 +1,7 @@
+# Todo en graphify-out/ es salida generada por el pipeline y por el hook
+# post-commit, que reconstruye el grafo de forma NO idempotente (el conteo de
+# nodos deriva entre corridas y se crean respaldos con fecha). Versionar estos
+# archivos crea churn perpetuo con el hook de auto-rebuild, así que se ignoran
+# todos. El grafo se regenera bajo demanda con `/graphify .` (o `graphify update .`).
+*
+!.gitignore

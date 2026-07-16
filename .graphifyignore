@@ -1,0 +1,32 @@
+# graphify ignore — carpetas que no deben entrar al grafo
+# Dependencias y builds
+node_modules/
+.next/
+dist/
+build/
+.venv/
+venv/
+__pycache__/
+.cache/
+
+# Salida del propio graphify
+graphify-out/
+
+# Scaffolding de las propias herramientas de agente (no es parte del producto)
+CLAUDE.md
+AGENTS.md
+.graphifyignore
+.claude/
+
+# Assets pesados (imágenes/video/audio/binarios) — descomenta/ajusta según crezca el repo
+assets/
+public/assets/
+static/
+*.mp4
+*.mov
+*.mp3
+*.wav
+*.zip
+*.pdf
+*.woff
+*.woff2
