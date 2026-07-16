@@ -415,7 +415,16 @@ function toast(msg,type='ok'){
   const id=Date.now();S.toasts.push({id,msg,type});re();
   setTimeout(()=>{S.toasts=S.toasts.filter(t=>t.id!==id);re();},3400);
 }
-function nav(v){if(!hasPerm(v)&&v!=='dashboard'){toast('Sin permiso para acceder a este módulo','err');return;}S.view=v;S.modal=null;S.search='';S.tab=0;S.filter='todos';re();}
+// ═══════════════════════════════════════════════════════
+// PROTECTOR DE ACCESO (route/view guard)
+// Un usuario solo puede ver un módulo si su rol lo permite.
+// dashboard queda siempre disponible para cualquier sesión autenticada.
+// Se aplica en dos capas: nav() (al navegar, con aviso) y re() (backstop
+// silencioso en cada render, por si S.view llega a un módulo prohibido por
+// cualquier otra vía). Defensa en profundidad.
+// ═══════════════════════════════════════════════════════
+function canView(v){return v==='dashboard'||hasPerm(v);}
+function nav(v){if(!canView(v)){toast('Sin permiso para acceder a este módulo','err');return;}S.view=v;S.modal=null;S.search='';S.tab=0;S.filter='todos';re();}
 function openM(n,d={}){S.modal={name:n,...d};re();}
 function closeM(){S.modal=null;S.cotItems=[{desc:'',qty:1,precio:0}];S.editCotItems=[];re();}
 function confirmDelete(msg,fn){if(confirm(msg))fn();}
@@ -1595,6 +1604,11 @@ const viewFns={dashboard:vDashboard,clientes:vClientes,ventas:vVentas,pedidos:vP
 
 function re(){
   if(!currentUser){return;}
+  // PROTECTOR (backstop): aunque nav() ya valida, revalidamos el permiso en cada
+  // render. Si S.view quedó en un módulo no permitido por cualquier vía (estado
+  // heredado, cambio de rol en caliente, llamada directa), se fuerza dashboard
+  // y se cierra cualquier modal abierto antes de renderizar.
+  if(!canView(S.view)){S.view='dashboard';S.modal=null;}
   const meta=viewMeta[S.view]||{h:'—',s:''};
   document.getElementById('app').innerHTML=`
     ${sidebar()}
